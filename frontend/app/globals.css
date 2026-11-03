@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter), "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --color-brand-cyan: #00aeef;
+  --color-brand-blue: #17469e;
+  --animate-fade-up: fade-up 0.4s ease-out both;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.marquee-track {
+  animation: marquee 40s linear infinite; /* duration is set per-render in LogoMarquee.tsx */
+  will-change: transform;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
+
+/* ---------- Testimonials slider (components/TestimonialsSection.tsx) ---------- */
+/* --tm-dir is set on the slider: 1 = moving forward, -1 = moving back */
+@keyframes testimonial-in {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--tm-dir, 1) * 28px));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes testimonial-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(calc(var(--tm-dir, 1) * -28px));
+  }
+}
+
+@keyframes testimonial-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.testimonial-slide[data-state="idle"] {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* the old text fades out first, then the new text slides in (as in the reference) */
+.testimonial-slide[data-state="exit"] {
+  animation: testimonial-out 300ms cubic-bezier(0.4, 0, 1, 1) both;
+  pointer-events: none;
+}
+
+.testimonial-slide[data-state="active"][data-moved="true"] {
+  animation: testimonial-in 550ms cubic-bezier(0.22, 0.61, 0.36, 1) 220ms both;
+}
+
+.testimonial-progress {
+  animation: testimonial-progress 700ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-slide,
+  .testimonial-progress {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+  }
+}
+
+/* ---------- Scroll reveal (see components/FadeInWhenVisible.tsx) ---------- */
+[data-reveal] {
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) var(--reveal-delay, 0ms),
+    transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) var(--reveal-delay, 0ms);
+}
+
+[data-reveal="hidden"] {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-y, 20px), 0);
+  will-change: opacity, transform;
+}
+
+@media (prefers-reduced-motion: reduce), print {
+  [data-reveal] {
+    transition: none;
+  }
+  [data-reveal="hidden"] {
+    opacity: 1;
+    transform: none;
+  }
+}
